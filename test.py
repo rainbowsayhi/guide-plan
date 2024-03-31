@@ -2,7 +2,6 @@ import openpyxl
 import re
 import random
 
-
 excel1 = openpyxl.load_workbook('Python2.xlsx')
 sheet1 = excel1['Sheet1']
 # excel2 = openpyxl.load_workbook('成绩2.xlsx')
@@ -50,7 +49,7 @@ for row in sheet1.iter_rows(min_row=2, values_only=True):
     # info[name] = {'py': py if py else 0, 'ai': ai if ai else 0}
 
 # print(info)
-    # index1 += 1
+# index1 += 1
 #     py_score = 0
 #     ai_score = 0
 #     if not row[0]:
@@ -66,18 +65,18 @@ for row in sheet1.iter_rows(min_row=2, values_only=True):
 #             if res2 := ai_score_regex.match(score):
 #                 sheet2.cell(index2, ai, res2.groups()[0])
 #         index2 += 1
-    # break
+# break
 
-    # a = random.randint(83, 90)
-    # b = random.randint(85, 87)
-    # c = int(a * 0.4 + b * 0.6)
-    #
-    # sheet.cell(index, 5, a)
-    # sheet.cell(index, 6, b)
-    #     sheet.cell(index, 7, s3)
-    #     sheet.cell(index, 8, res)
-    # index1 += 1
-    # break
+# a = random.randint(83, 90)
+# b = random.randint(85, 87)
+# c = int(a * 0.4 + b * 0.6)
+#
+# sheet.cell(index, 5, a)
+# sheet.cell(index, 6, b)
+#     sheet.cell(index, 7, s3)
+#     sheet.cell(index, 8, res)
+# index1 += 1
+# break
 
 excel1.save('Python3.xlsx')
 # excel2.save('成绩2.xlsx')

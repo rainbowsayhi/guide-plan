@@ -1,38 +1,124 @@
 # 湾大人工智能引航计划选课系统
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+---
 
-#### 软件架构
-软件架构说明
+## 项目背景
 
-#### 安装教程
+项目开发的初心是为了简化老师的排课工作。因为在这么多的学生中，每个学生的课表层出不穷，人工进行排课的难度可想而知。因此以课程为常量，让学生自己在系统选择合适的时间段进行上课，这样就把课程冲突的问题交给学生自己处理，老师只需要拿到选课的名单即可。这样可以极大程度上降低了排课的工作量。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+__为什么要在“选课系统”前加上“人工智能引航计划”？__
 
-#### 使用说明
+答：因为“人工智能引航计划”是我们学校的一个选修课，而这个系统作用的对象就是这个选修课。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 项目开发周期
 
-#### 参与贡献
+* 2023年9月9日——2023年9月16日（开发基本完成）
+* 2023年9月16日（项目首次上线）
+* 2023年10月——2023年11月底（项目迭代期）
+* 2023年11月19日（迭代完毕、第二次上线）
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 项目技术栈
 
+* 开发模式：前后端不分离。
+* 前端：Vue2 + Element-UI。
+* 后端：Django + DRF。
+* 数据库：MySQL + Redis。
+* 部署方式：Django + uWSGI + Nginx。
 
-#### 特技
+## 系统设计思路
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+* ### 首页数据查询思路
+
+  在这个系统中，首页的数据基本上是不会发生变化的，所以第一次向数据库查询数据的时候顺便写入缓存，之后都会从缓存中获取数据，提高了查询效率。
+
+  ![](md-image/%E9%A6%96%E9%A1%B5%E6%95%B0%E6%8D%AE.png)
+
+* ### 选课接口设计思路
+
+  由于课程数据保存在Redis中，但由于课程余量是个变量，因此我将课程信息和课程余量分开存储。也就是说，课程余量用的是Redis的哈希表来存储。所以每次选课操作都不会直接对数据库做修改，而是直接在缓存层做修改。并且每个学生的已选课程数据也会通过一个哈希表来存储，并不会直接保存到数据库当中。
+
+  因此首页数据查询需要查询两次，一次是课程信息，一次是课程余量。
+
+* ### 选课接口中的“商品超卖问题”
+
+  对于选课或者说是商品秒杀这些业务场景等，它们都会使数据库中的数据减少，而这些业务场景通常都处于高并发的场景下，那么一旦出现高并发，就会有多个线程同时修改一个数据，从而很大概率会出现一个“商品超卖问题”。
+
+  __先看一个简单的场景：__
+
+  假设现在有两个用户需要选择同一个课程，但是这个课程只剩下一个库存，当他们的请求同时到达缓存层，用户A先拿到了这个数据，这个库存即将变成0，但是就在这个变成0的过程中，用户B也拿到了这个数据，此时用户A还没有完全修改完这个数据，最后两个用户都成功修改了这条数据，数据的值变成了-1。库存1件的商品卖出去了2件……
+
+  以上就是对商品超卖问题的简单介绍。
+
+  __那么为了防止这样的问题发生，本项目使用了一个基于Redis实现的分布式锁来解决这个问题：__
+
+  首先如果用户A需要修改缓存中的库存，会先判断有没有其他用户正在修改这条数据。判断的依据是查询缓存中是否存在有以课程ID为键，以用户ID为值的一条数据。也就是说，如果有其他用户正在操作相同的课程，缓存中会有一个<code>course_id: username</code>这样的数据，那么程序暂停0.5秒，之后再次查询有没有其他用户正在操作这条数据，直到用户A成功拿到这条数据为止；另一种情况是，如果用户A重试次数达到了40次，则直接返回等待时间过长。
+
+  那么像<code>course_id: username</code>这样的数据，我们称它为“锁”，如果它存在，则表示有别的用户正在操作这条数据，你现在没有修改这条数据的权限。
+
+  以下代码是从项目代码中抽取出来的一个实现分布式锁的基本逻辑：
+
+  ```python
+  # key 表示用户ID
+  # connect 表示与Redis建立的连接
+  retry = 0
+  while True:
+      if retry > 40:  # 最多等待20秒
+          return '等待时间超时，选课失败'
+      lock = connect.set(course_id, key, nx=True, ex=30)  # 获取分布式锁，获取成功设置30秒过期时间
+      if lock is None:  # 锁为空，说明没有拿到锁
+          sleep(0.5)
+          retry += 1
+          continue
+      try:
+          stock = connect.hget('course_stocks', course_id)
+          if stock is None:
+              connect.delete(course_id)
+              return '课程不存在，选课失败'
+          stock = int(stock)
+          if stock - 1 < 0:  # 课程余量不足
+              connect.delete(course_id)
+              return '课程余量不足，选课失败'
+          pipeline = connect.pipeline()  # 绑定事务
+          pipeline.multi()  # 启动事务
+          try:
+              student_choice_courses_list = cache.get(key, set())
+              if course_id in student_choice_courses_list:  # 该课程已在选课列表中
+                  return '该课程已在选课列表中'
+              pipeline.hset('course_stocks', course_id, stock - 1)  # 将命令加入管道中，不会立即执行
+          except Exception as exception:
+              pipeline.reset()  # 有异常则回滚
+              return '选课异常，%s' % exception
+          else:
+              pipeline.execute()  # 无异常则执行命令
+              student_choice_courses_list.add(course_id)  # 加入选课列表
+              cache.set(key, student_choice_courses_list, 60 * 60 * 24 * 7)
+              return None  # 不能不写，不写的话会继续循环
+          finally:
+              value = connect.get(course_id)
+              if value.decode() == key:  # 只有获取的值等于自己设置的值才会释放锁，避免释放别人的锁
+                  connect.delete(course_id)
+      except Exception as exception:
+          value = connect.get(course_id)
+          if value.decode() == key:
+              connect.delete(course_id)
+          return '选课异常，%s' % exception
+  ```
+
+  在<code>lock = connect.set(course_id, key, nx=True, ex=30)</code>中，“nx=True”表示只有在没有这条数据的情况下，才设置。并且会在30秒后过期（对于缓存中的IO操作来说，已经很长了）。
+
+  除了基本的逻辑外，还是使用了Redis的事务，如果期间发生了任何的错误，都会回滚到事务之前的状态。
+
+  逻辑的最后还判断了这把锁是否是自己加的锁，这样的目的是为了不释放别人的锁。
+
+  上述的分布式锁只是一个简单的实现方式，对于更加严谨的实现方式，可能就需要使用到别的第三方库了。但在这个项目中上面的代码已经完全够用了。
+
+* ### 关于数据库和缓存数据一致性的问题
+
+  由于选课的时候，只会修改缓存中的数据，不会操作数据库。所以就造成了数据库中的数据不是最新的。但是在这个系统中，这样的情况是没有问题的。
+
+  首先开放选课的时间不会很长，最多是2天，在选课期间我们是不会关注哪个学生选了什么样的课程的，但是对于学生来说，他们可以在用户中心里面看到他们所选的课程。
+
+  只有当选课结束后，才会将每一位学生的已选课程数据依次的写入到数据库中，在写的过程中，又同时会将数据写入 到 Excel 表中，最后我们只需要查看这个 Excel 表就可以清晰的了解选课情况了。
+
+  所以在整个过程中，数据库数据同步与否是没有多大的影响的。
+

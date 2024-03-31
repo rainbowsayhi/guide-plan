@@ -193,7 +193,7 @@ EMAIL_HOST_USER = 'rainbow59216@foxmail.com'
 EMAIL_HOST_PASSWORD = 'egpzpjrwjhzsdcbb'
 EMAIL_FROM = '湾大人工智能引航计划<rainbow59216@foxmail.com>'
 
-COURSE_TIME_INDEX = 2
+COURSE_TIME_INDEX = 1
 
 # 修改DRF显示日期的格式
 REST_FRAMEWORK = {
