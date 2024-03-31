@@ -1,0 +1,65 @@
+{% extends 'base_template/base.html' %}
+
+{% block title %}湾大人工智能引航计划-选课系统{% endblock title %}
+
+{% block body %}
+    <div class="body-content">
+        <div class="period-title">
+            <h1>第{$ course_time.index $}期湾大人工智能引航计划选课信息</h1>
+            <h3 style="text-decoration: underline">*选课开始时间：{$ course_time.start_choice_time $}</h3>
+            <h3 style="text-decoration: underline">*选课结束时间：{$ course_time.end_choice_time $}</h3>
+        </div>
+        <div class="choice-class-box">
+            <div class="period" v-for="course_period in course_periods">
+                <h3>
+                    <span>阶段{$ course_period.index $}：&lt;{$ course_period.start_time $}至{$ course_period.end_time $}&gt;</span>
+                </h3>
+                <el-card class="box-card" shadow="hover" v-for="course_info in course_period.course_infos">
+                    <div slot="header" class="clearfix">
+                        <span :title="course_info.title">{$ course_info.title $}</span>
+                    </div>
+                    <div class="text item">类型：{$ course_info.course_type $}</div>
+                    <div class="text item">课程性质：{$ course_info.nature $}</div>
+                    <div class="text item">地点：{$ course_info.location $}</div>
+                    <div class="text item">时间：{$ course_info.opening_time $}</div>
+                    <div class="text item" :title="course_info.specific_time">具体时间：{$ course_info.specific_time $}</div>
+                    <div class="text item">课程余量：{$ course_stock[course_info.id] $}</div>
+                    <div v-if="is_login">
+                        <div v-if="!student_choice_courses_list.includes(course_info.id)">
+                            <el-button v-if="course_stock[course_info.id]" type="primary"
+                                   @click="choice_course(course_info.id)">选课
+                            </el-button>
+                            <button v-else disabled="disabled"
+                                type="button"
+                                class="el-button el-button--primary is-disabled">已满
+                            </button>
+                        </div>
+                        <div v-else>
+                            <el-button type="danger" @click="quit_course(course_info.id)">退课</el-button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <button disabled="disabled"
+                                type="button"
+                                class="el-button el-button--primary is-disabled">选课
+                        </button>
+                    </div>
+                </el-card>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-navigation">
+            <div class="footer-content">
+                <span style="font-weight: bolder">Copyright © 2023 Rainbow. All rights reserved.</span>
+                <div class="filing"><a href="https://beian.miit.gov.cn/">桂ICP备2023011989号</a></div>
+            </div>
+        </div>
+    </footer>
+    {% csrf_token %}
+{% endblock body %}
+
+{% block foot_js %}
+    <script src="/static/js/index.js"></script>
+    <script src="/static/js/md5.js"></script>
+{% endblock foot_js %}

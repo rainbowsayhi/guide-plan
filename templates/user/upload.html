@@ -1,0 +1,49 @@
+{% extends 'user/user_center.html' %}
+
+{% block box-title %}上传作业{% endblock box-title %}
+{% block right_box %}
+    {% csrf_token %}
+    <div id="app">
+        <el-upload
+          class="upload-demo"
+          drag
+          :on-change="add_file"
+          action="none"
+          accept=".zip"
+          :limit="1"
+          :file-list="fileList"
+          :on-exceed="exceed"
+          :show-file-list="false"
+          :auto-upload="false" style="text-align: center">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">*只能上传zip格式的文件，一次只能上传一个文件，且文件大小不能超过100MB。</div>
+        </el-upload>
+        <el-badge :value="count" class="item" type="success" :title="query_file_title">
+            <el-button v-if="count" style="margin-left: 40px" type="primary" @click="submit_homework">提交作业</el-button>
+            <el-button v-else style="margin-left: 40px" type="primary" disabled="disabled">提交作业</el-button>
+        </el-badge>
+        <el-divider>上传历史记录</el-divider>
+        <el-table :data="upload_history" style="width: 100%">
+             <el-table-column prop="time" label="上传时间"></el-table-column>
+             <el-table-column prop="filename" label="文件名"></el-table-column>
+             <el-table-column prop="size" label="文件大小/b"></el-table-column>
+             <el-table-column prop="" label="操作">
+                 <template slot-scope="scope">
+                     <el-button @click="delete_homework(scope.row)" type="text" size="primary">撤销</el-button>
+                 </template>
+             </el-table-column>
+         </el-table>
+    </div>
+    {{ upload_history|json_script:'history_datas' }}
+    <style>
+        .item {
+          margin-top: 20px;
+          margin-right: 40px;
+        }
+        #app {
+            text-align: center;
+        }
+    </style>
+{% endblock right_box %}
+{% block foot_js %}<script src="/static/js/upload.js"></script>{% endblock foot_js %}

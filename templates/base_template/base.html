@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <link rel="short icon" href="/static/image/logo.jpg">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <title>{% block title %}{% endblock title %}</title>
+    {% block head_css %}{% endblock head_css %}
+    {% block head_js %}{% endblock head_js %}
+</head>
+
+<body>
+{% block navigator %}
+    <div class="navigator">
+        <span class="navigator-title">湾大人工智能引航计划-线下课选课系统</span>
+        {% if not request.user.is_authenticated %}
+            <div style="float: right;margin-right: 4%">
+                <a href="{% url 'user:login' %}">登录以获得更好的体验</a>
+                <i class="el-icon-s-opportunity"></i>
+            </div>
+        {% else %}
+            <div class="user-option">
+                <el-dropdown>
+                    <span class="el-dropdown-link" style="color: white; font-size: 18px">
+                        用户：{{ request.user.username }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        {% block selected-box %}
+                            <a href="{% url 'user:center' %}">
+                                <el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
+                            </a>
+                            <a href="{% url 'user:change' %}">
+                                <el-dropdown-item icon="el-icon-edit">修改密码</el-dropdown-item>
+                            </a>
+                            <a href="{% url 'user:selected' %}">
+                                <el-dropdown-item icon="el-icon-tickets">选课信息</el-dropdown-item>
+                            </a>
+                        {% endblock selected-box %}
+                        <a href="/api/user/logout">
+                            <el-dropdown-item icon="el-icon-delete">退出登录</el-dropdown-item>
+                        </a>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
+        {% endif %}
+    </div>
+{% endblock navigator %}
+
+{% block body %}{% endblock body %}
+
+</body>
+</html>
+<script src="/static/js/vue.js" type="text/javascript"></script>
+<script src="/static/js/element.js" type="text/javascript"></script>
+<script src="/static/js/axios.min.js" type="text/javascript"></script>
+<script src="/static/js/request.js"></script>
+<script>
+    var current_url = window.location.href;
+    if(current_url.search('/user/login') == -1) {
+        new Vue({
+            el: '.user-option'
+        });
+    }
+    var new_alert = new Vue({
+        data: {},
+        methods: {
+            my_alert(message, alert_type) {
+                this.$message({
+                    message: message,
+                    type: alert_type,
+                    duration: 2000,
+                    showClose: true,
+                });
+            },
+            my_message(title, content, content_type) {
+                this.$notify({
+                    title: title,
+                    message: content,
+                    type: content_type,
+                    duration: 2000,
+                });
+            },
+        }
+    });
+</script>
+{% block foot_js %}{% endblock foot_js %}

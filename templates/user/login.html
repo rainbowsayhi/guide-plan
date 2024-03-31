@@ -1,0 +1,43 @@
+{% extends 'base_template/base.html' %}
+{% load static %}
+
+
+{% block title %}登录{% endblock title %}
+{% block head_css %}
+    <link href="/static/css/login.css" rel='stylesheet' type='text/css'/>
+{% endblock head_css %}
+
+{% block navigator %}{% endblock navigator %}
+
+{% block body %}
+    <div class="main">
+        <div class="login">
+            <h1>引航计划选课系统</h1>
+            <div class="inset">
+                <!--start-main-->
+                <form>
+                    {% csrf_token %}
+                    <div>
+                        <h2>学生登录</h2>
+                        <span><label>学号</label></span>
+                        <span>
+                            <input type="text" class="stuid" id="stuid" name="stuid" placeholder="请输入学号">
+                        </span>
+                    </div>
+                    <div>
+                        <span><label>密码</label></span>
+                        <span><input type="password" class="password" id="pwd" name="pwd" placeholder="请输入密码"></span>
+                    </div>
+                    <div class="sign">
+                        <input type="button" value="登录" class="submit" @click="login"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--//end-main-->
+    </div>
+{% endblock body %}
+
+{% block foot_js %}
+    <script src="/static/js/login.js"></script>
+{% endblock foot_js %}

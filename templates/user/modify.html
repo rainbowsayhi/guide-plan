@@ -1,0 +1,62 @@
+{% extends 'user/user_center.html' %}
+
+{% block box-title %}修改信息{% endblock box-title %}
+{% block right_box %}
+    {% csrf_token %}
+    <div id="app">
+        <div class="fields">
+            <span>姓名：</span>
+            <el-input placeholder="请输入姓名" v-model="name" style="width: 200px"></el-input>
+            <span v-if="!name" class="error-msg">*姓名不能为空！</span>
+        </div>
+        <div class="fields">
+            <span>学号：</span>
+            <el-input placeholder="{{ request.user.username }}" v-model="no" :disabled="true" style="width: 200px"></el-input>
+            <i class="el-icon-lock"></i>
+        </div>
+        <div class="fields">
+            <span>性别：</span>
+            <el-radio v-model="gender" label="1">男</el-radio>
+            <el-radio v-model="gender" label="0">女</el-radio>
+        </div>
+        <div class="fields">
+            <span>学院：</span>
+            <el-select v-model="college" placeholder="请选择学院" style="width: 200px">
+                <el-option
+                  v-for="college in colleges"
+                  :key="college"
+                  :label="college"
+                  :value="college">
+                </el-option>
+              </el-select>
+        </div>
+        <div class="fields">
+            <span>专业：</span>
+            <el-input placeholder="请输入专业" v-model="major" style="width: 200px"></el-input>
+            <span v-if="!major" class="error-msg">*专业不能为空！</span>
+        </div>
+        <div class="fields">
+            <span>班级：</span>
+            <el-input placeholder="请输入班级" v-model="stu_class" style="width: 200px"></el-input>
+            <span v-if="!stu_class" class="error-msg">*班级不能为空！</span>
+        </div>
+        <div class="fields">
+            <span>邮箱：</span>
+            <el-input placeholder="请输入邮箱" v-model="email" style="width: 200px"></el-input>
+            <span v-if="!email" class="error-msg">*邮箱不能为空！</span>
+        </div>
+        <div class="fields">
+            <span>手机：</span>
+            <el-input placeholder="请输入手机号" v-model="phone" style="width: 200px"></el-input>
+            <span v-if="!phone" class="error-msg">*手机号不能为空！</span>
+        </div>
+        <div class="commit-info-to-server">
+            <el-button v-if="can_be_submit" type="primary" @click="commit_info">提交修改</el-button>
+        </div>
+    </div>
+    {{ infos|json_script:'infos' }}
+{% endblock right_box %}
+
+{% block foot_js %}
+    <script src="/static/js/modify.js" type="text/javascript"></script>
+{% endblock foot_js %}

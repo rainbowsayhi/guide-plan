@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/request.js"></script>
+    <script src="/static/js/element.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+
+<div id="app">
+    <el-button @click="drawer=true" type="primary" style="margin-left: 16px;">
+      点击查看选课信息
+    </el-button>
+
+    <el-drawer title="第1期湾大人工智能引航计划选课信息" :visible.sync="drawer" :direction="direction">
+      <h3>选课开始时间：2023-09-17 08:54:00</h3>
+      <h3>选课结束时间：2023-11-26 08:00:00</h3>
+    </el-drawer>
+</div>
+
+
+
+
+</body>
+<script>
+    var count = 0;
+    const timer = setInterval(() => {
+        console.log(count);
+        count += 1;
+        if (count == 10) {
+            clearInterval(this);
+        }
+    }, 1000);
+    setTimeout(() => {
+        clearInterval(timer);
+    }, 10000);
+    console.log(100)
+    new Vue({
+        el: "#app",
+        data: {
+            drawer: false,
+            direction: 'ttb',
+        },
+        methods: {
+            a() {
+                alert(1)
+            }
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,220 @@
+{% extends 'base_template/base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block title %}{{ request.user.username }}-个人主页{% endblock title %}
+{% block head_css %}
+    <link rel="stylesheet" href="/static/css/bulma.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .error-msg {
+            color: red;
+            margin-left: 20px;
+            font-size: 15px;
+        }
+        .content-a {
+            color: black;
+            margin-left: 12px;
+        }
+
+        .content-a:hover {
+            color: #0f81cc;
+        }
+
+        .box-content1 {
+            padding-left: 62px;
+            padding-bottom: 7px;
+        }
+
+        .user-info {
+            margin-top: 13px;
+            margin-bottom: 12px;
+        }
+    </style>
+{% endblock head_css %}
+
+{% block selected-box %}
+    <a href="{% url 'course:index' %}">
+        <el-dropdown-item icon="el-icon-s-home">返回首页</el-dropdown-item>
+    </a>
+{% endblock selected-box %}
+
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">用户中心</p>
+                            <a href="" class="card-header-icon" aria-label="more options">
+                                <span class="icon">
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </header>
+                        <div class="box-content1">
+                            <div class="user-info"><a href="{% url 'user:center' %}" class="content-a">用户信息</a></div>
+                            <div class="user-info"><a href="{% url 'user:change' %}" class="content-a">修改密码</a></div>
+                            <div class="user-info"><a href="{% url 'user:selected' %}" class="content-a">选课信息</a></div>
+                            <div class="user-info"><a href="{% url 'user:upload' %}" class="content-a">上传作业</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <div class="box is-radiusless is-shadowless">
+                        <div class="tabs">
+                            <ul>
+                                <li class="is-active"><a>{% block box-title %}账号信息{% endblock box-title %}</a></li>
+                            </ul>
+                        </div>
+                        {% block right_box %}
+                            <div class="columns is-mobile"
+                                 style="border-bottom: #ededed solid 1px; padding-bottom: 1rem">
+                                <div class="column is-narrow">
+                                    <figure class="image is-96x96">
+                                        <img class="is-rounded" src="/static/image/default.png" alt="image">
+                                    </figure>
+                                </div>
+                                <div class="column is-narrow-mobile">
+                                    <a class=" button is-light is-pulled-right" href="{% url 'user:modify' %}"
+                                       style="margin-top: 1.8rem">修改信息</a>
+                                </div>
+                            </div>
+                            <div class="columns" style="padding:1rem 0; ">
+                                <div class="column is-2">
+                                    <p>个人信息</p>
+                                </div>
+                                <div class="column">
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">姓名</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.name %}
+                                                {{ request.user.name }}
+                                            {% else %}
+                                                未填写姓名
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">性别</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.gender %}
+                                                男
+                                            {% else %}
+                                                女
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">学号</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                            <span class=" has-text-black-ter">{{ request.user.username }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">学院</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                            <span class=" has-text-black-ter">
+                                                {% if request.user.college %}
+                                                    {{ request.user.college }}
+                                                {% else %}
+                                                    未填写学院
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">专业</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.major %}
+                                                {{ request.user.major }}
+                                            {% else %}
+                                                未填写专业
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">班级</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.stu_class %}
+                                                {{ request.user.stu_class }}
+                                            {% else %}
+                                                未填写班级
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">邮箱</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.email %}
+                                                {{ request.user.email }}
+                                            {% else %}
+                                                邮箱为空
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">手机号</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                        <span class=" has-text-black-ter">
+                                            {% if request.user.phone %}
+                                                {{ request.user.phone|hidden_phone }}
+                                            {% else %}
+                                                手机号为空
+                                            {% endif %}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                        <div class="column is-2">
+                                            <span class=" has-text-grey-light">引航计划</span>
+                                        </div>
+                                        <div class="column is-narrow">
+                                            <span class=" has-text-black-ter">第{{ request.user.time }}期</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endblock right_box %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock body %}
+
+{% block foot_js %}
+    <script>
+        var referrer = document.referrer
+        if (referrer.search('/user/login') != -1) {
+            new_alert.my_message('系统消息：', '欢迎回来！', 'success');
+        }
+    </script>
+{% endblock foot_js %}

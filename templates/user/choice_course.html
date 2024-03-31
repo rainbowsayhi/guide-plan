@@ -1,0 +1,37 @@
+{% extends 'user/user_center.html' %}
+
+{% block box-title %}选课信息{% endblock box-title %}
+{% block right_box %}
+    <div id="app">
+         <el-table :data="course_info" style="width: 100%">
+             <el-table-column prop="title" label="课程标题"></el-table-column>
+             <el-table-column prop="teacher" label="教师"></el-table-column>
+             <el-table-column prop="period" label="课程阶段"></el-table-column>
+             <el-table-column prop="opening_time" label="上课时间"></el-table-column>
+             <el-table-column prop="specific_time" label="具体时间"></el-table-column>
+             <el-table-column prop="location" label="上课地点"></el-table-column>
+         </el-table>
+    </div>
+    {{ course_info|json_script:'course_info' }}
+{% endblock right_box %}
+{% block foot_js %}
+    <script>
+        let course_info = JSON.parse(document.getElementById('course_info').textContent);
+        new Vue({
+            el: '#app',
+            data: {
+                course_info: []
+            },
+            created() {
+                this.get_selected_course();
+            },
+            methods: {
+                get_selected_course() {
+                    course_info.forEach((info) => {
+                        this.course_info.push(info);
+                    })
+                }
+            }
+        })
+    </script>
+{% endblock foot_js %}

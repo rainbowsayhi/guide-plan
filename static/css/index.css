@@ -1,0 +1,137 @@
+body {
+    margin: 0;
+    background: #eef6fd;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+a:hover {
+    color: black;
+}
+
+.navigator {
+    height: 40px;
+    padding-top: 12px;
+    background: #0091e6;
+    color: white;
+    font-size: 18px;
+}
+
+.navigator-title {
+    margin-left: 40px;
+}
+
+/*.login {*/
+/*    margin-left: 1220px;*/
+/*}*/
+
+/*.user-center {*/
+/*    margin-left: 1100px;*/
+/*}*/
+
+/*.logout {*/
+/*    margin-left: 30px;*/
+/*}*/
+
+.choice-class-box {
+    margin-top: 70px;
+    margin-left: 50px;
+    font-size: 18px;
+}
+
+.period {
+    margin-bottom: 50px;
+}
+
+.period-title {
+    margin-top: 35px;
+    text-align: center;
+}
+
+.class-info button {
+    margin-left: 60px;
+    margin-bottom: 13px;
+}
+
+.class-info-title {
+    text-align: center;
+}
+
+.text {
+    font-size: 15px;
+}
+
+.item {
+    margin-bottom: 18px;
+}
+
+.clearfix {
+    text-align: center;
+    font-size: 17px;
+    font-weight: bolder;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+
+.clearfix:after {
+    clear: both
+}
+
+.box-card {
+    width: 223px;
+    height: max-content;
+    border-radius: 17px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 7px
+}
+
+.box-card:hover {
+    color: #0091e6;
+    border: #0091e6 solid 1px;
+}
+
+.box-card button {
+    margin-left: 53px
+}
+
+.user-option {
+    float: right;
+    margin-right: 1.6%;
+}
+
+footer {
+    margin-top: 100px;
+    width: 100%;
+    /*background: #cedded;*/
+    background-image: linear-gradient(to top, #cde4f9, #73b3eb)
+}
+
+.footer-navigation {
+    text-align: center;
+    height: 65px;
+    font-size: 16px;
+    padding-top: 15px;
+    width:100%;
+}
+
+.footer-navigation a {
+    color: #143eca;
+}
+
+.footer-navigation a:hover {
+    color: black;
+}
+
+.filing {
+    margin-top: 0.7%;
+}

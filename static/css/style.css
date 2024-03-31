@@ -1,0 +1,13 @@
+html, body{
+    background-color: aliceblue;
+}
+
+.fields {
+    margin-left: 380px;
+    margin-top: 30px;
+}
+
+.commit-info-to-server {
+    margin-top: 30px;
+    margin-left: 467px;
+}

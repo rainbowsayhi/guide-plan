@@ -1,0 +1,53 @@
+{% extends 'base_template/base.html' %}
+{% load my_tags %}
+
+{% block title %}湾大人工智能引航计划-选课系统{% endblock title %}
+
+{% block body %}
+    <div class="period-title">
+        <h1>第{{ course_time_index }}期湾大人工智能引航计划选课信息</h1>
+        <h3>选课开始时间：{{ course_time_start_choice_time }}</h3>
+        <h3>选课结束时间：{{ course_time_end_choice_time }}</h3>
+    </div>
+    <div class="choice-class-box">
+        {% for course_period in course_periods %}
+            <div class="period">
+                <h3>
+                    <span>阶段{{ course_period.index }}：{{ course_period.start_time }}至{{ course_period.end_time }}</span>
+                </h3>
+                {% for course_info in course_period.course_infos %}
+                    <el-card class="box-card" shadow="hover">
+                        <div slot="header" class="clearfix">
+                            <span title="{{ course_info.title }}">{{ course_info.title }}</span>
+                        </div>
+                        <div class="text item">教师：{{ course_info.teacher }}</div>
+                        <div class="text item">类型：{{ course_info.type }}</div>
+                        <div class="text item">课程性质：{{ course_info.course_nature }}</div>
+                        <div class="text item">地点：{{ course_info.location }}</div>
+                        <div class="text item">时间：{{ course_info.opening }}</div>
+                        <div class="text item" title="{{ course_info.specific_time }}">具体时间：{{ course_info.specific_time }}</div>
+                        <div class="text item">剩余名额：{{ course_info.id|get_course_stock }}</div>
+                        {% if request.user.is_authenticated %}
+                            {% if course_info.id not in student_choice_courses_list %}
+                                <el-button type="primary" @click="choice_course('{{ course_info.id|encode_token }}')">
+                                    选课
+                                </el-button>
+                            {% else %}
+                                <el-button type="danger" @click="quit_course('{{ course_info.id|encode_token }}')">
+                                    退课
+                                </el-button>
+                            {% endif %}
+                        {% else %}
+                            <button disabled="disabled" type="button" class="el-button el-button--primary is-disabled">
+                                选课
+                            </button>
+                        {% endif %}
+                    </el-card>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    {% csrf_token %}
+{% endblock body %}
+
+{% block foot_js %}<script src="/static/js/index.js"></script>{% endblock foot_js %}
